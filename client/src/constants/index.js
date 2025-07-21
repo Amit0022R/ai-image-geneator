@@ -42,7 +42,7 @@ export const surpriseMePrompts = [
   'A Man falling in Love with his Computer, digital art',
   'A photograph of a cyborg exploring Tokyo at night, lomography',
   'Dracula walking down the street of New York City in the 1920s, black and white photography',
-  'Synthwave aeroplane',
+  'Synthwave aeroplane' ,
   'A man wanders through the rainy streets of Tokyo, with bright neon signs, 50mm',
   'A Space Shuttle flying above Cape Town, digital art',
 ];
