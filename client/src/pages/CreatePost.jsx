@@ -16,11 +16,56 @@ const CreatePost = () => {
   const [generatingImg, setGeneratingImg] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const generateImage =  () => {
-      
+  const generateImage = async () => {
+      if(form.prompt) { // check if prompt is not empty
+          try {
+            setGeneratingImg(true);
+            const response = await fetch('http://localhost:8080/api/v1/dalle/generate', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json', // specify the content type
+              },
+              body: JSON.stringify({ prompt: form.prompt }),
+            });
+
+            const data = await response.json();
+            setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}` });
+
+          } catch (error) {
+              alert(error);
+          } finally {
+            setGeneratingImg(false);
+          } 
+      } else {
+        alert('Please provide a prompt');
+      }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // browser doesn't automatically reload our application
+    if(form.prompt && form.photo){
+      setLoading(true);
+
+      try {
+        const response = await fetch('http://localhost:8080/api/v1/post', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(form)
+        })
+
+        await response.json();
+        navigate('/');
+      } catch (error) {
+        alert(error);
+      } finally{
+        setLoading(false);
+      }
+
+    } else {
+        alert('Please enter a prompt and genrate an image');
+    }
 
   }
 
@@ -101,17 +146,6 @@ const CreatePost = () => {
               {loading ? 'Sharing...' : 'Share with the community'}
             </button>
           </div>   
-
-          <div className='mt-10' >
-            <p className="mt-2 text-[#666e75] text-[14px] ">Once you have create the image you ant, you can share it with others in the community</p>
-              <button
-                type="submit"
-                className="mt-3 text-white bg-blue-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                // onClick={handleSubmit}
-              >
-                {loading ? 'Sharing...' : 'Share with the community'}
-              </button>
-          </div>
 
       </form>
     </section>
